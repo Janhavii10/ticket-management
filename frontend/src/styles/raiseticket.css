@@ -1,0 +1,42 @@
+/* Custom styles for RaiseTicket component */
+.main {
+  max-width: 60vw;
+  height: 90vh; /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto; /* Ensure centering */
+}
+
+.card {
+  width: 100%;
+  max-width: 500px; /* Limit card width for better form appearance */
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+.container {
+  margin-top: 20px;
+}
+
+.form-label {
+  font-weight: bold;
+}
+
+.text-danger {
+  color: #ff0000;
+}
+
+.text-muted {
+  font-size: 0.8rem;
+}
+
+button[type="submit"] {
+  background-color: #3fafff; /* Update submit button color */
+}
+
+button.btn-outline-dark {
+  border-color: #000;
+  color: #000;
+}
