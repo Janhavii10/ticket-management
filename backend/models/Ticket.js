@@ -4,8 +4,8 @@ const AutoIncrement = require("mongoose-sequence")(mongoose);
 const ticketSchema = new mongoose.Schema({
   ticket_id: { type: Number },
   subject: { type: String, required: true },
-  description: { type: String },
-  user_id: { type: String, required: true },
+  description: { type: String, default: "" },
+  user_id: { type: Number, required: true },
   agent_id: { type: Number, default: null },
   category: { type: String, enum: ["IT", "HR", "Admin"], default: "" }, // Added category field
   priority: { type: String, enum: ["Low", "Medium", "High", "Critical"], required: true, default: "" }, // Set default to empty string

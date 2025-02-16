@@ -1,13 +1,13 @@
 import React from 'react';
 import Navbar from './Admin/Navbar';
-import UserAuth from './Admin/UserAuth';
+import PendingUser from './Admin/PendingUser';
 
 
 const AdminDashboard = () => {
   return (
     <>
       <Navbar />
-      <UserAuth />
+      <PendingUser />
       
     </>
   );

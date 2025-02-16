@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 const Ticket = require('./models/Ticket');
 const PendingUser = require('./models/PendingUser'); // Import PendingUser model
-const ticketsRouter = require("./routes/tickets");
+const ticketsRouter = require("./routes/createtickets");
 const path = require("path");
-const authRoutes = require("./routes/auth"); // Import auth routes
+
 
 const app = express();
 const PORT = 5000;
@@ -200,31 +200,18 @@ app.get('/api/admin/pending-users', async (req, res) => {
   }
 });
 
-app.use("/api", authRoutes); // Add auth routes
+const changePasswordRoutes = require("./routes/changepassword"); // Import change password route
+app.use("/api/change-password", changePasswordRoutes); // Change password route
+
+const prevTicketsRouter = require("./routes/prevtickets");
+app.use(prevTicketsRouter);
+
+const assignAgentsRouter = require("./routes/assignagents"); // Updated import
+// const usersRouter = require("./routes/users");
+app.use(assignAgentsRouter); // Updated route
+// app.use(usersRouter);
+
 
 // Server Start
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// Endpoint to create a new ticket
-// app.post('/api/tickets', async (req, res) => {
-//   const { title, description, customer_id, priority } = req.body;
-
-//   try {
-//     const latestTicket = await Ticket.findOne().sort({ ticket_id: -1 });
-//     const ticket_id = latestTicket ? latestTicket.ticket_id + 1 : 1;
-
-//     const ticket = new Ticket({
-//       ticket_id,
-//       title,
-//       description,
-//       customer_id,
-//       priority,
-//       status: 'Open',
-//     });
-
-//     await ticket.save();
-//     res.status(201).json({ message: 'Ticket created successfully', ticket });
-//   } catch (err) {
-//     res.status(400).json({ message: 'Error creating ticket', error: err.message });
-//   }
-// });

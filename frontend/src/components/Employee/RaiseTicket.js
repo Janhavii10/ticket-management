@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../../styles/raiseticket.css";  // Import the CSS file
+import "../../styles/raiseticket.css"; // Import the CSS file
+import { useNavigate } from "react-router-dom"; 
 
 const RaiseTicket = () => {
   const [formData, setFormData] = useState({
@@ -9,10 +10,12 @@ const RaiseTicket = () => {
     description: "",
     category: "",
     priority: "",
-    attachments: null,
+    attachments: [],
   });
 
   const [userId, setUserId] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]); // Store selected file names
+  const navigate = useNavigate(); // Initialize navigate function
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -27,39 +30,50 @@ const RaiseTicket = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, attachments: e.target.files }));
+    const files = Array.from(e.target.files);
+    setFormData((prev) => ({ ...prev, attachments: [...prev.attachments, ...files] }));
+    setSelectedFiles((prev) => [...prev, ...files.map((file) => file.name)]);
+  };
+
+  const removeFile = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      attachments: prev.attachments.filter((_, i) => i !== index),
+    }));
+
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index)); // Remove file from selected files
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Token not found. Please log in.");
       return;
     }
-  
+
     if (!formData.category) {
       alert("Please select a valid category.");
       return;
     }
-  
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("subject", formData.subject);
-      formDataToSend.append("description", formData.description);
+      formDataToSend.append("description", formData.description || "");
       formDataToSend.append("category", formData.category);
       formDataToSend.append("priority", formData.priority);
-      formDataToSend.append("user_id", userId); // Ensure user_id is included
-  
-      if (formData.attachments) {
-        Array.from(formData.attachments).forEach((file) => {
+      formDataToSend.append("user_id", userId);
+
+      if (formData.attachments.length > 0) {
+        formData.attachments.forEach((file) => {
           formDataToSend.append("attachments", file);
         });
       }
-  
+
       const response = await axios.post(
-        "http://localhost:5000/api/tickets",
+        "http://localhost:5000/api/createtickets",
         formDataToSend,
         {
           headers: {
@@ -68,24 +82,27 @@ const RaiseTicket = () => {
           },
         }
       );
-  
+
       alert(response.data.message);
       setFormData({
         subject: "",
         description: "",
         category: "",
         priority: "",
-        attachments: null,
+        attachments: [],
       });
+      setSelectedFiles([]); // Clear selected files
     } catch (err) {
       console.error("Server Error:", err.response?.data || err.message);
       alert("Error creating ticket: " + (err.response?.data?.message || "Unknown error"));
     }
   };
-  
 
   return (
+    <>
     <div className="main">
+      
+
       <div className="card p-4 shadow-sm">
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -99,7 +116,7 @@ const RaiseTicket = () => {
               onChange={handleChange}
               required
             >
-              <option value="">Select Category</option> {/* Ensure users cannot submit an empty category */}
+              <option value="">Select Category</option>
               <option value="IT">IT</option>
               <option value="HR">HR</option>
               <option value="Admin">Admin</option>
@@ -165,7 +182,24 @@ const RaiseTicket = () => {
               multiple
               onChange={handleFileChange}
             />
-            {/* <small className="text-muted">Valid filetypes: DOC, PDF, PNG, JPG, JPEG</small> */}
+
+            {/* Display selected files with a remove button */}
+            {selectedFiles.length > 0 && (
+              <ul className="selected-files mt-2">
+                {selectedFiles.map((fileName, index) => (
+                  <li key={index}>
+                    <span>{fileName}</span>
+                    <button
+                      type="button"
+                      className="remove-file-btn"
+                      onClick={() => removeFile(index)}
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <button type="submit" className="btn btn-primary w-100">
@@ -174,6 +208,7 @@ const RaiseTicket = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

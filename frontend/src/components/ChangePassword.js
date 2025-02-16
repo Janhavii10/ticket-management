@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate hook
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 import '../styles/changepassword.css';
 
 const ChangePassword = () => {
@@ -10,7 +10,7 @@ const ChangePassword = () => {
     newPassword: "",
   });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,7 +19,7 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token"); // Get JWT from local storage
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:5000/api/change-password",
         formData,
@@ -41,15 +41,12 @@ const ChangePassword = () => {
   };
 
   const handleCancel = () => {
-    // Navigate to the homepage (assuming it's the root route)
     navigate("/dashboard-admin");
   };
 
   return (
     <div className="page-background">
-      <div className="container">
         <div className="card-container">
-          {/* Floating Key Icon */}
           <div className="floating-icon">
             <i className="bi bi-key-fill fs-3"></i>
           </div>
@@ -91,7 +88,6 @@ const ChangePassword = () => {
             </div>
           </form>
         </div>
-      </div>
     </div>
   );
 };

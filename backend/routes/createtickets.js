@@ -5,18 +5,18 @@ const upload = require("../middleware/fileUpload");
 const authenticate = require("../middleware/authenticate"); // JWT authentication middleware
 
 // POST: Create a new ticket with attachments
-router.post("/api/tickets", authenticate, upload.array("attachments"), async (req, res) => {
-  const { subject, description, priority, category } = req.body; // Ensure category is received
+router.post("/api/createtickets", authenticate, upload.array("attachments"), async (req, res) => {
+  const { subject, description, priority, category } = req.body; 
 
   try {
-    const userId = req.user?.id; // Get user ID from the JWT token
+    const userId = req.user.id; // Get user ID from the JWT token
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized: User ID missing" });
     }
 
     // Validate required fields
-    if (!subject || !description || !priority || !category) {
+    if (!subject || !priority || !category) {
       return res.status(400).json({ message: "All fields (title, description, priority, category) are required." });
     }
 
